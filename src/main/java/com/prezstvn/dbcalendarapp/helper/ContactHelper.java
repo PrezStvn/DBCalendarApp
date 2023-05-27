@@ -10,9 +10,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ContactHelper {
-    public static ObservableList<String> getContacts() throws SQLException {
-
+public abstract class ContactHelper {
+    public static ObservableList<Contact> getContacts() throws SQLException {
+        ObservableList<Contact> allContacts = FXCollections.observableArrayList();
         Map<String, Integer> contactMap = new HashMap<String, Integer>();
         String sql = "SELECT Contact_ID, Contact_Name FROM Contacts;";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -22,8 +22,9 @@ public class ContactHelper {
             newContact.setContactId(rs.getInt("Contact_ID"));
             newContact.setContactName(rs.getString("Contact_Name"));
             contactMap.put(newContact.getContactName(), newContact.getContactId());
+            allContacts.add(newContact);
         }
-        ObservableList<String> allContacts = FXCollections.observableArrayList(contactMap.keySet());
+
         return allContacts;
     }
 }

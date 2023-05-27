@@ -90,11 +90,22 @@ public class ScheduleController implements Initializable {
     }
 
     public void modifyAppointment(ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/ModifyAppointment.fxml"));
-        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        stage.setTitle("Modify Appointment");
-        stage.setScene(new Scene(root, 600, 400));
-        stage.show();
+        try {
+            Appointment targetAppointment = scheduleTable.getSelectionModel().getSelectedItem();
+            if (targetAppointment == null) {
+                throw new Exception("Please select an Appointment to modify.");
+            }
+            Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/ModifyAppointment.fxml"));
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            stage.setTitle("Modify Appointment");
+            stage.setScene(new Scene(root, 600, 400));
+            stage.show();
+        } catch(Exception e) {
+            Alert alert =  new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Modify Appointment Selection Error");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 
 

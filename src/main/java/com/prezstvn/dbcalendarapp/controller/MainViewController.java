@@ -30,4 +30,15 @@ public class MainViewController {
         stage.setScene(new Scene(root, 900, 400));
         stage.show();
     }
+
+    public void onRecordsClick(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/CustomerRecords.fxml"));
+        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
+        stage.setTitle("Schedule");
+        stage.setScene(new Scene(root, 700, 400));
+        stage.show();
+    }
+
+    public void onReportsClick(ActionEvent actionEvent) {
+    }
 }

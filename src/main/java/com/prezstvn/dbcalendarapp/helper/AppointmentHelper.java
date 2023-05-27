@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 public abstract class AppointmentHelper {
@@ -54,6 +55,7 @@ public abstract class AppointmentHelper {
      * @throws SQLException
      */
     private static Appointment mapAppointment(ResultSet rs) throws SQLException {
+        ZoneId thisZoneId = ZoneId.systemDefault();
         Appointment mappedAppointment = new Appointment();
         mappedAppointment.setAppointmentId(rs.getInt("Appointment_ID"));
         mappedAppointment.setTitle(rs.getString("Title"));
@@ -61,13 +63,15 @@ public abstract class AppointmentHelper {
         mappedAppointment.setLocation(rs.getString("Location"));
         mappedAppointment.setContactId(rs.getInt("Contact_ID"));
         mappedAppointment.setType(rs.getString("Type"));
-        //TODO: times presently do not convert to system local time || STILL IN UTC
+        //TODO: times presently show both utc and local  idk whats up with that || still need to find that kinkead video
         LocalDateTime startDate = rs.getTimestamp("Start").toLocalDateTime();
-        mappedAppointment.setStart(startDate.atZone(ZoneId.systemDefault()).toLocalDateTime());
+        ZonedDateTime zonedStartDate = ZonedDateTime.of(startDate, thisZoneId);
+        mappedAppointment.setStart(zonedStartDate);
         LocalDateTime endDate = rs.getTimestamp("End").toLocalDateTime();
-        mappedAppointment.setEnd(endDate.atZone(ZoneId.systemDefault()).toLocalDateTime());
+        ZonedDateTime zonedEndDate = ZonedDateTime.of(startDate, thisZoneId);
+        mappedAppointment.setEnd(zonedEndDate);
         mappedAppointment.setCustomerId(rs.getInt("Customer_ID"));
         mappedAppointment.setUserId(rs.getInt("User_ID"));
-        return mappedAppointment; 
+        return mappedAppointment;
     }
 }

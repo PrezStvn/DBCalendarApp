@@ -1,6 +1,7 @@
 package com.prezstvn.dbcalendarapp.controller;
 
 import com.prezstvn.dbcalendarapp.helper.ContactHelper;
+import com.prezstvn.dbcalendarapp.model.Contact;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -26,22 +27,29 @@ public class AddAppointmentController implements Initializable {
     public TextField AppointmentCustomerId;
     public DatePicker AppointmentStartDate;
     public DatePicker AppointmentEndDate;
-    public ComboBox<String> ContactComboCox;
+    public ComboBox<Contact> ContactComboCox;
     public TextField AppointmentUserId;
 
+    /**
+     * setting up combobox values when scene is created
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            ObservableList<String> contactsCombo = ContactHelper.getContacts();
+            ObservableList<Contact> contactsCombo = ContactHelper.getContacts();
             ContactComboCox.setItems(contactsCombo);
+            ContactComboCox.getSelectionModel().selectFirst();
         } catch(SQLException e) {
             System.out.println(e);
         }
     }
 
     /**
+     * when the save Appt button is clicked this first executes logical checks to ensure user input fields are valid for an Appt object
      *
-     * @param actionEvent
+     * @param actionEvent SaveButton(AddAppointmentSave){horrible name} is clicked
      * @throws IOException
      */
     public void onSaveClick(ActionEvent actionEvent) throws IOException {

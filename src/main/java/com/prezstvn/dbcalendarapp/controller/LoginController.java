@@ -60,7 +60,7 @@ public class LoginController implements Initializable {
         Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/MainView.fxml"));
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         stage.setTitle("Main App Menu");
-        stage.setScene(new Scene(root, 700, 500));
+        stage.setScene(new Scene(root, 400, 300));
         stage.show();
     }
 
