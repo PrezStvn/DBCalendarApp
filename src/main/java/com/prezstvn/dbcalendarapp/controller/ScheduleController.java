@@ -2,7 +2,6 @@ package com.prezstvn.dbcalendarapp.controller;
 
 import com.prezstvn.dbcalendarapp.helper.AppointmentHelper;
 import com.prezstvn.dbcalendarapp.model.Appointment;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -38,6 +37,7 @@ public class ScheduleController implements Initializable {
     public Button addAppointmentButton;
     public Button modifyAppointmentButton;
     public Button deleteAppointmentButton;
+    public Button MainMenu;
 
     private ObservableList<Appointment> appointmentSchedule;
 
@@ -109,4 +109,11 @@ public class ScheduleController implements Initializable {
     }
 
 
+    public void onMainMenuClick(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/MainMenu.fxml"));
+        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
+        stage.setTitle("Main Menu");
+        stage.setScene(new Scene(root, 400, 300));
+        stage.show();
+    }
 }

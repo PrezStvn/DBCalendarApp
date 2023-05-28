@@ -8,5 +8,6 @@ module com.prezstvn.dbcalendarapp {
     exports com.prezstvn.dbcalendarapp;
     exports com.prezstvn.dbcalendarapp.controller;
     exports com.prezstvn.dbcalendarapp.model;
+    exports com.prezstvn.dbcalendarapp.exception;
     opens com.prezstvn.dbcalendarapp.controller to javafx.fxml;
 }

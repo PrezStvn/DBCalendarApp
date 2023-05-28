@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="828.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prezstvn.dbcalendarapp.controller.CustomerRecordController">
+   <children>
+      <Group layoutX="214.0" layoutY="36.0">
+         <children>
+            <TableView fx:id="customerRecordTable" layoutY="24.0" prefHeight="256.0" prefWidth="567.0">
+              <columns>
+                <TableColumn fx:id="customerIdColumn" prefWidth="75.0" text="Customer_ID" />
+                <TableColumn fx:id="nameColumn" prefWidth="47.20001220703125" text="Name" />
+                  <TableColumn fx:id="addressColumn" prefWidth="68.0" text="Address" />
+                  <TableColumn fx:id="postalCodeColumn" prefWidth="64.0" text="Postal_Code" />
+                  <TableColumn fx:id="phoneColumn" prefWidth="62.4000244140625" text="Phone" />
+                  <TableColumn fx:id="divisionIdColumn" prefWidth="68.0" text="Division_ID" />
+                  <TableColumn fx:id="countryIdColumn" prefWidth="79.199951171875" text="Country_ID" />
+              </columns>
+            </TableView>
+         </children>
+      </Group>
+      <Button fx:id="addCustomerButton" layoutX="13.0" layoutY="218.0" mnemonicParsing="false" onAction="#addCustomer" prefHeight="26.0" prefWidth="50.0" text="Add" />
+      <Button fx:id="deleteCustomerButton" layoutX="13.0" layoutY="254.0" mnemonicParsing="false" onAction="#deleteCustomer" text="Delete" />
+      <Button fx:id="modifyCustomerButton" layoutX="12.0" layoutY="290.0" mnemonicParsing="false" onAction="#modifyCustomer" text="Modify" />
+      <ComboBox fx:id="CountryCombo" layoutX="14.0" layoutY="69.0" prefWidth="150.0" />
+      <ComboBox fx:id="DivisionCombo" layoutX="14.0" layoutY="112.0" prefWidth="150.0" />
+      <Label layoutX="66.0" layoutY="25.0" prefHeight="26.0" prefWidth="160.0" text="Customer Records">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Button fx:id="MainMenu" layoutX="63.0" layoutY="344.0" mnemonicParsing="false" onAction="#onMainMenuClick" text="Main Menu" />
+   </children>
+</AnchorPane>
