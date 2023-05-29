@@ -1,5 +1,6 @@
 package com.prezstvn.dbcalendarapp.controller;
 
+import com.prezstvn.dbcalendarapp.exception.AppointmentException;
 import com.prezstvn.dbcalendarapp.helper.ContactHelper;
 import com.prezstvn.dbcalendarapp.model.Appointment;
 import com.prezstvn.dbcalendarapp.model.Contact;
@@ -17,8 +18,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.ResourceBundle;
 
 /**
@@ -42,7 +42,7 @@ public class ModifyAppointmentController implements Initializable {
     public TextField AppointmentUserId;
     public TextArea AppointmentDescription;
     
-    private static Appointment targetAppointment;
+    private Appointment targetAppointment;
     public ComboBox<LocalTime> StartTimeComboBox;
     public ComboBox<LocalTime> EndTimeComboBox;
 
@@ -67,15 +67,19 @@ public class ModifyAppointmentController implements Initializable {
      * @throws IOException
      */
     public void onSaveClick(ActionEvent actionEvent) throws IOException {
-        //TODO: SET static appointment back to null.
-        if(isValidAppointment()) {
-            targetAppointment = null;
+        try {
+            Appointment appointmentToAdd = isValidAppointment();
+            Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/Schedule.fxml"));
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            stage.setTitle("Schedule");
+            stage.setScene(new Scene(root, 900, 400));
+            stage.show();
+        } catch(AppointmentException e) {
+            Alert alert =  new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Modify Appointment Error");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
         }
-        Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/Schedule.fxml"));
-        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        stage.setTitle("Schedule");
-        stage.setScene(new Scene(root, 900, 400));
-        stage.show();
     }
 
     private void setTimes() {
@@ -90,10 +94,26 @@ public class ModifyAppointmentController implements Initializable {
         }
     }
 
-    private boolean isValidAppointment() {
-        boolean isValid = false;
+    private Appointment isValidAppointment() throws AppointmentException {
+        Appointment appointmentToAdd =  new Appointment();
+        //TODO: Logic checks mainly time constraints est 0800-2200
+        String title = AppointmentTitle.getText();
+        String description = AppointmentDescription.getText();
+        String location = AppointmentLocation.getText();
+        String type;
+        ZonedDateTime startTime = LocalDateTime.of(AppointmentStartDate.getValue(), StartTimeComboBox.getValue()).atZone(ZoneId.systemDefault());
+        ZonedDateTime endTime = LocalDateTime.of(AppointmentEndDate.getValue(), EndTimeComboBox.getValue()).atZone(ZoneId.systemDefault());
+        int customerId;
+        int userId;
+        int contactId = ContactComboCox.getSelectionModel().getSelectedItem().getContactId();
+        try {
+            customerId = Integer.parseInt(AppointmentCustomerId.getText());
+            userId = Integer.parseInt(AppointmentUserId.getText());
+        } catch(Exception e) {
+            throw new AppointmentException("Customer_ID and User_ID most both be positive integers and not blank");
+        }
 
-        return isValid;
+        return appointmentToAdd;
     }
 
     public void onCancelClick(ActionEvent actionEvent) throws IOException {

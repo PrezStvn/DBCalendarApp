@@ -1,6 +1,8 @@
 package com.prezstvn.dbcalendarapp.controller;
 
+import com.prezstvn.dbcalendarapp.exception.AppointmentException;
 import com.prezstvn.dbcalendarapp.helper.ContactHelper;
+import com.prezstvn.dbcalendarapp.model.Appointment;
 import com.prezstvn.dbcalendarapp.model.Contact;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,7 +17,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ResourceBundle;
 
 public class AddAppointmentController implements Initializable {
@@ -74,17 +79,42 @@ public class AddAppointmentController implements Initializable {
      * @throws IOException
      */
     public void onSaveClick(ActionEvent actionEvent) throws IOException {
-        //TODO: method that calls the save here
-        isValidAppointment();
-        Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/Schedule.fxml"));
-        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        stage.setTitle("Schedule");
-        stage.setScene(new Scene(root, 900, 600));
-        stage.show();
+        try {
+            //TODO: method that calls the save here
+            Appointment appointmentToAdd = isValidAppointment();
+            Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/Schedule.fxml"));
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            stage.setTitle("Schedule");
+            stage.setScene(new Scene(root, 900, 600));
+            stage.show();
+        } catch(AppointmentException e) {
+            Alert alert =  new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Modify Appointment Error");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 
-    private void isValidAppointment() {
+    private Appointment isValidAppointment() throws AppointmentException {
+        Appointment appointmentToAdd =  new Appointment();
+        //TODO: Logic checks mainly time constraints est 0800-2200
+        String title = AppointmentTitle.getText();
+        String description = AppointmentDescription.getText();
+        String location = AppointmentLocation.getText();
+        String type;
+        ZonedDateTime startTime = LocalDateTime.of(AppointmentStartDate.getValue(), StartTimeComboBox.getValue()).atZone(ZoneId.systemDefault());
+        ZonedDateTime endTime = LocalDateTime.of(AppointmentEndDate.getValue(), EndTimeComboBox.getValue()).atZone(ZoneId.systemDefault());
+        int customerId;
+        int userId;
+        int contactId = ContactComboCox.getSelectionModel().getSelectedItem().getContactId();
+        try {
+            customerId = Integer.parseInt(AppointmentCustomerId.getText());
+            userId = Integer.parseInt(AppointmentUserId.getText());
+        } catch(Exception e) {
+            throw new AppointmentException("Customer_ID and User_ID most both be positive integers and not blank");
+        }
 
+        return appointmentToAdd;
     }
 
     /**

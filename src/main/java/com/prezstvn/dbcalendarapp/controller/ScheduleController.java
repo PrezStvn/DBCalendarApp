@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ResourceBundle;
 
 public class ScheduleController implements Initializable {
@@ -30,8 +31,8 @@ public class ScheduleController implements Initializable {
     public TableColumn<Appointment, String> locationColumn;
     public TableColumn<Appointment, Integer> contactColumn;
     public TableColumn<Appointment, String> typeColumn;
-    public TableColumn<Appointment, LocalDateTime> startDateColumn;
-    public TableColumn<Appointment, LocalDateTime> endDateColumn;
+    public TableColumn<Appointment, ZonedDateTime> startDateColumn;
+    public TableColumn<Appointment, ZonedDateTime> endDateColumn;
     public TableColumn<Appointment, Integer> customerIdColumn;
     public TableColumn<Appointment, Integer> userIdColumn;
     public Button addAppointmentButton;
