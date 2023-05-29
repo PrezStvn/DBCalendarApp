@@ -27,19 +27,10 @@ public class CustomerRecordController implements Initializable {
     public TableColumn postalCodeColumn;
     public TableColumn phoneColumn;
     public TableColumn divisionIdColumn;
-    public TableColumn countryIdColumn;
     public Button addCustomerButton;
     public Button deleteCustomerButton;
     public Button modifyCustomerButton;
-    /**
-     * todo: populate combo boxes with string int pairs.
-     * add an on action that dynamically generates the values in second combo box based on country
-     */
-    public ComboBox CountryCombo;
-    /**
-     * todo: on action that filters customer records based on selected division
-     */
-    public ComboBox DivisionCombo;
+
     public Button MainMenu;
 
     private ObservableList<Customer> customerRecords;
@@ -53,15 +44,56 @@ public class CustomerRecordController implements Initializable {
     }
 
     public void deleteCustomer(ActionEvent actionEvent) {
+
+        try {
+            Customer targetCustomer = customerRecordTable.getSelectionModel().getSelectedItem();
+            if (targetCustomer == null) {
+                throw new Exception("Please select a Customer Record to delete");
+            }
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete Customer");
+            alert.setContentText("Do you wish to delete this Customer and their currently scheduled Appointments?");
+            ButtonType confirmButton = ButtonType.YES;
+            ButtonType cancelButton = ButtonType.CANCEL;
+            alert.getButtonTypes().setAll(confirmButton, cancelButton);
+            /*  I do not know how poor of practice it is to include exception handling in the expression like this
+            *  Lambda to take user input on the alert shown before user deletes customer
+            *
+             */
+            alert.showAndWait().ifPresent(buttonType -> {
+                if (buttonType == confirmButton) {
+                    try {
+                        CustomerHelper.deleteCustomer(targetCustomer);
+
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else if (buttonType == cancelButton) alert.close();
+            });
+            updateCustomerTable();
+        } catch(Exception e) {
+            Alert alert =  new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Delete Customer Selection Error");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+            }
     }
 
-    public void modifyCustomer(ActionEvent actionEvent) throws IOException {
+    private void updateCustomerTable() throws SQLException {
+        customerRecords = CustomerHelper.getCustomerRecords();
+        customerRecordTable.setItems(customerRecords);
+    }
+
+    public void modifyCustomer(ActionEvent actionEvent) throws IOException, SQLException {
         try {
             Customer targetCustomer = customerRecordTable.getSelectionModel().getSelectedItem();
             if(targetCustomer == null) {
                 throw new Exception("Please select a Customer Record to modify");
             }
-            Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/ModifyCustomer.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/prezstvn/dbcalendarapp/ModifyCustomer.fxml"));
+            Parent root = loader.load();
+            ModifyCustomerController controller = loader.getController();
+            controller.setCustomerToModify(targetCustomer);
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             stage.setTitle("Modify Customer Form");
             stage.setScene(new Scene(root, 700, 400));
@@ -93,7 +125,6 @@ public class CustomerRecordController implements Initializable {
         postalCodeColumn.setCellValueFactory(new PropertyValueFactory<>("postalCode"));;
         phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));;
         divisionIdColumn.setCellValueFactory(new PropertyValueFactory<>("divisionId"));;
-        countryIdColumn.setCellValueFactory(new PropertyValueFactory<>("countryId"));;
     }
 
     public void onMainMenuClick(ActionEvent actionEvent) throws IOException {

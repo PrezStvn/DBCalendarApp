@@ -95,7 +95,10 @@ public class ScheduleController implements Initializable {
             if (targetAppointment == null) {
                 throw new Exception("Please select an Appointment to modify.");
             }
-            Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/ModifyAppointment.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/prezstvn/dbcalendarapp/ModifyAppointment.fxml"));
+            Parent root = loader.load();
+            ModifyAppointmentController controller = loader.getController();
+            controller.setTargetAppointment(targetAppointment);
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             stage.setTitle("Modify Appointment");
             stage.setScene(new Scene(root, 600, 400));

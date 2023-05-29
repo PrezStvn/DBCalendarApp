@@ -63,12 +63,13 @@ public abstract class AppointmentHelper {
         mappedAppointment.setLocation(rs.getString("Location"));
         mappedAppointment.setContactId(rs.getInt("Contact_ID"));
         mappedAppointment.setType(rs.getString("Type"));
-        //TODO: times presently show both utc and local  idk whats up with that || still need to find that kinkead video
+        //TODO: times presently show both utc and local  times are displaying as intended now i think
+
         LocalDateTime startDate = rs.getTimestamp("Start").toLocalDateTime();
         ZonedDateTime zonedStartDate = ZonedDateTime.of(startDate, thisZoneId);
         mappedAppointment.setStart(zonedStartDate);
         LocalDateTime endDate = rs.getTimestamp("End").toLocalDateTime();
-        ZonedDateTime zonedEndDate = ZonedDateTime.of(startDate, thisZoneId);
+        ZonedDateTime zonedEndDate = ZonedDateTime.of(endDate, thisZoneId);
         mappedAppointment.setEnd(zonedEndDate);
         mappedAppointment.setCustomerId(rs.getInt("Customer_ID"));
         mappedAppointment.setUserId(rs.getInt("User_ID"));

@@ -17,7 +17,17 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ResourceBundle;
+
+/**
+ * FUTURE ENHANCEMENT: it may be more intelligent to combine both the controllers and the views for
+ * add and modify CustomerRecords(also for Appointments) the functionality and style of both pages are near identical
+ * both modify and create take in all the same info just a logical choice would need to be made at page creation
+ * to set page as add Customer or Modify Customer
+ *
+ */
 
 public class ModifyAppointmentController implements Initializable {
     public TextField AppointmentId;
@@ -33,6 +43,8 @@ public class ModifyAppointmentController implements Initializable {
     public TextArea AppointmentDescription;
     
     private static Appointment targetAppointment;
+    public ComboBox<LocalTime> StartTimeComboBox;
+    public ComboBox<LocalTime> EndTimeComboBox;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -40,9 +52,11 @@ public class ModifyAppointmentController implements Initializable {
             ObservableList<Contact> contactsCombo = ContactHelper.getContacts();
             ContactComboCox.setItems(contactsCombo);
             ContactComboCox.getSelectionModel().selectFirst();
+            setTimes();
         } catch(SQLException e) {
             System.out.println(e);
         }
+
     }
 
     /**
@@ -64,6 +78,18 @@ public class ModifyAppointmentController implements Initializable {
         stage.show();
     }
 
+    private void setTimes() {
+        LocalTime startTime = LocalTime.of(0, 0);
+        LocalTime endTime = LocalTime.of(23, 44);
+
+        // Populate the ComboBox with time values in 15-minute increments
+        while (startTime.isBefore(endTime) || startTime.equals(endTime)) {
+            StartTimeComboBox.getItems().add(startTime);
+            EndTimeComboBox.getItems().add(startTime);
+            startTime = startTime.plusMinutes(15);
+        }
+    }
+
     private boolean isValidAppointment() {
         boolean isValid = false;
 
@@ -78,7 +104,39 @@ public class ModifyAppointmentController implements Initializable {
         stage.show();
     }
     
-    public static void setTargetAppointment(Appointment sentAppointment) {
+    public void setTargetAppointment(Appointment sentAppointment) {
         targetAppointment = sentAppointment;
+        setFormFields();
+    }
+
+    /**
+     * setting all forms initial values based on those in targetAppointment
+     * TODO: add field for the current time as well maybe another combo with 15 min intervals;
+     */
+    private void setFormFields() {
+        AppointmentId.setText(String.valueOf(targetAppointment.getAppointmentId()));
+        AppointmentTitle.setText(targetAppointment.getTitle());
+        AppointmentDescription.setText(targetAppointment.getDescription());
+        AppointmentLocation.setText(targetAppointment.getLocation());
+        AppointmentStartDate.setValue(targetAppointment.getStart().toLocalDate());
+        AppointmentEndDate.setValue(targetAppointment.getEnd().toLocalDate());
+        AppointmentCustomerId.setText(String.valueOf(targetAppointment.getCustomerId()));
+        setContactComboBox();
+        AppointmentUserId.setText(String.valueOf(targetAppointment.getUserId()));
+    }
+
+    /**
+     * iterating through contacts in the contactcomboBox
+     * once matching contact is found the index is returned then
+     * that index is used to set the value displayed in the ContactComboBox
+     */
+    private void setContactComboBox() {
+        ObservableList<Contact> contactList = ContactComboCox.getItems();
+        int indexOfContactInList = 0;
+        for(Contact contact : contactList) {
+            if(contact.getContactId() == targetAppointment.getContactId()) break;
+            else indexOfContactInList++;
+        }
+        ContactComboCox.getSelectionModel().select(indexOfContactInList);
     }
 }

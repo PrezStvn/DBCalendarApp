@@ -8,17 +8,16 @@ public class Division {
      */
     private int divisionId;
     private String division;
-    private LocalDateTime createDate;
-    private String createdBy;
-    private LocalDateTime lastUpdate;
-    private String lastUpdatedBy;
     /**
      * Foreign Key: references Country
      */
     private int countryId;
 
-    public Division() {
+    public Division(int id, String division, int countryId) {
         //TODO: required params ()
+        this.divisionId = id;
+        this.division = division;
+        this.countryId = countryId;
     }
 
     public int getDivisionId() {
@@ -37,37 +36,6 @@ public class Division {
         this.division = division;
     }
 
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public LocalDateTime getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(LocalDateTime lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
-    public String getLastUpdatedBy() {
-        return lastUpdatedBy;
-    }
-
-    public void setLastUpdatedBy(String lastUpdatedBy) {
-        this.lastUpdatedBy = lastUpdatedBy;
-    }
 
     public int getCountryId() {
         return countryId;
@@ -75,5 +43,10 @@ public class Division {
 
     public void setCountryId(int countryId) {
         this.countryId = countryId;
+    }
+
+    @Override
+    public String toString() {
+        return this.division;
     }
 }
