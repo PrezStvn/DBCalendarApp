@@ -41,7 +41,8 @@ public class ModifyAppointmentController implements Initializable {
     public ComboBox<Contact> ContactComboCox;
     public TextField AppointmentUserId;
     public TextArea AppointmentDescription;
-    
+    public ComboBox<String> AppointmentTypeComboBox;
+
     private Appointment targetAppointment;
     public ComboBox<LocalTime> StartTimeComboBox;
     public ComboBox<LocalTime> EndTimeComboBox;
@@ -53,6 +54,10 @@ public class ModifyAppointmentController implements Initializable {
             ContactComboCox.setItems(contactsCombo);
             ContactComboCox.getSelectionModel().selectFirst();
             setTimes();
+            AppointmentStartDate.setValue(LocalDate.now());
+            AppointmentEndDate.setValue(LocalDate.now());
+            StartTimeComboBox.getSelectionModel().select(LocalTime.of(8, 0));
+            EndTimeComboBox.getSelectionModel().select(LocalTime.of(8, 30));
         } catch(SQLException e) {
             System.out.println(e);
         }
@@ -142,7 +147,17 @@ public class ModifyAppointmentController implements Initializable {
         AppointmentEndDate.setValue(targetAppointment.getEnd().toLocalDate());
         AppointmentCustomerId.setText(String.valueOf(targetAppointment.getCustomerId()));
         setContactComboBox();
+        setAppointmentTypes();
         AppointmentUserId.setText(String.valueOf(targetAppointment.getUserId()));
+    }
+
+    private void setAppointmentTypes() {
+        ObservableList<String> typesList = FXCollections.observableArrayList();
+        typesList.add("Planning Session");
+        typesList.add("De-Briefing");
+        typesList.add("Marketing");
+        typesList.add("Coffee");
+        AppointmentTypeComboBox.setItems(typesList);
     }
 
     /**

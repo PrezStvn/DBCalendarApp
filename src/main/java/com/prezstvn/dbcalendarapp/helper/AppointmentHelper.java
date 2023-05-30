@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 
 public abstract class AppointmentHelper {
@@ -46,6 +47,19 @@ public abstract class AppointmentHelper {
             allAppointments.add(appt);
         }
         return allAppointments;
+    }
+
+    public static ObservableList<Appointment> getCustomerAppointments(int customerId) throws SQLException {
+        ObservableList<Appointment> customerAppointments = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM Appointments WHERE Customer_ID =?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, customerId);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()) {
+            Appointment appt = mapAppointment(rs);
+            customerAppointments.add(appt);
+        }
+        return customerAppointments;
     }
 
     /**

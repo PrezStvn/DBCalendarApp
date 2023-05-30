@@ -40,6 +40,8 @@
       <ComboBox fx:id="EndTimeComboBox" layoutX="378.0" layoutY="277.0" prefWidth="150.0" />
       <Label layoutX="69.0" layoutY="281.0" text="Start Time" />
       <Label layoutX="318.0" layoutY="281.0" text="End Time" />
+      <Label layoutX="69.0" layoutY="96.0" text="Type" />
+      <ComboBox fx:id="AppointmentTypeComboBox" layoutX="164.0" layoutY="92.0" prefWidth="150.0" />
 
     </children>
 </AnchorPane>

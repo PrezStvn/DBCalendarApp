@@ -1,9 +1,11 @@
 package com.prezstvn.dbcalendarapp.controller;
 
 import com.prezstvn.dbcalendarapp.exception.AppointmentException;
+import com.prezstvn.dbcalendarapp.helper.AppointmentHelper;
 import com.prezstvn.dbcalendarapp.helper.ContactHelper;
 import com.prezstvn.dbcalendarapp.model.Appointment;
 import com.prezstvn.dbcalendarapp.model.Contact;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -17,10 +19,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
 
 public class AddAppointmentController implements Initializable {
@@ -37,6 +37,7 @@ public class AddAppointmentController implements Initializable {
     public TextField AppointmentUserId;
     public ComboBox<LocalTime> StartTimeComboBox;
     public ComboBox<LocalTime> EndTimeComboBox;
+    public ComboBox<String> AppointmentTypeComboBox;
 
     /**
      * setting up combobox values when scene is created
@@ -50,6 +51,11 @@ public class AddAppointmentController implements Initializable {
             ContactComboCox.setItems(contactsCombo);
             ContactComboCox.getSelectionModel().selectFirst();
             setTimes();
+            setAppointmentTypes();
+            AppointmentStartDate.setValue(LocalDate.now());
+            AppointmentEndDate.setValue(LocalDate.now());
+            StartTimeComboBox.getSelectionModel().select(LocalTime.of(8, 0));
+            EndTimeComboBox.getSelectionModel().select(LocalTime.of(8, 30));
         } catch(SQLException e) {
             System.out.println(e);
         }
@@ -73,6 +79,19 @@ public class AddAppointmentController implements Initializable {
     }
 
     /**
+     * setting the selectable appointment Types
+     * limits appointment types to only what is in comboBox
+     */
+    private void setAppointmentTypes() {
+        ObservableList<String> typesList = FXCollections.observableArrayList();
+        typesList.add("Planning Session");
+        typesList.add("De-Briefing");
+        typesList.add("Marketing");
+        typesList.add("Coffee");
+        AppointmentTypeComboBox.setItems(typesList);
+    }
+
+    /**
      * when the save Appt button is clicked this first executes logical checks to ensure user input fields are valid for an Appt object
      *
      * @param actionEvent SaveButton(AddAppointmentSave){horrible name} is clicked
@@ -85,7 +104,7 @@ public class AddAppointmentController implements Initializable {
             Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/Schedule.fxml"));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             stage.setTitle("Schedule");
-            stage.setScene(new Scene(root, 900, 600));
+            stage.setScene(new Scene(root, 700, 600));
             stage.show();
         } catch(AppointmentException e) {
             Alert alert =  new Alert(Alert.AlertType.INFORMATION);
@@ -95,13 +114,18 @@ public class AddAppointmentController implements Initializable {
         }
     }
 
+    /**
+     *
+     * @return
+     * @throws AppointmentException
+     */
     private Appointment isValidAppointment() throws AppointmentException {
         Appointment appointmentToAdd =  new Appointment();
         //TODO: Logic checks mainly time constraints est 0800-2200
         String title = AppointmentTitle.getText();
         String description = AppointmentDescription.getText();
         String location = AppointmentLocation.getText();
-        String type;
+        String type = AppointmentTypeComboBox.getValue();
         ZonedDateTime startTime = LocalDateTime.of(AppointmentStartDate.getValue(), StartTimeComboBox.getValue()).atZone(ZoneId.systemDefault());
         ZonedDateTime endTime = LocalDateTime.of(AppointmentEndDate.getValue(), EndTimeComboBox.getValue()).atZone(ZoneId.systemDefault());
         int customerId;
@@ -113,8 +137,30 @@ public class AddAppointmentController implements Initializable {
         } catch(Exception e) {
             throw new AppointmentException("Customer_ID and User_ID most both be positive integers and not blank");
         }
-
+        if(type == null) throw new AppointmentException("Please select an appointment Type");
+        if(title.equals("")) throw new AppointmentException("");
+        if(description.equals("")) throw new AppointmentException("");
+        if(location.equals("")) throw new AppointmentException("");
+        ChronoCheck(customerId, startTime, endTime);
         return appointmentToAdd;
+    }
+
+    private void ChronoCheck(int customerId, ZonedDateTime startTime, ZonedDateTime endTime) throws AppointmentException {
+        try {
+            ObservableList<Appointment> customerAppointments = AppointmentHelper.getCustomerAppointments(customerId);
+
+            for(Appointment appt : customerAppointments) {
+                long newStartScheduledStart = ChronoUnit.MINUTES.between(startTime, appt.getStart());
+                long newStartScheduledEnd = ChronoUnit.MINUTES.between(startTime, appt.getEnd());
+                long newEndScheduledStart = ChronoUnit.MINUTES.between(endTime, appt.getStart());
+                long newEndScheduledEnd = ChronoUnit.MINUTES.between(endTime, appt.getEnd());
+                if(newStartScheduledStart > 0 && newStartScheduledEnd < 0) throw new AppointmentException("Scheduling conflict: this customer has an appointment scheduled during these times already.");
+                if(newEndScheduledStart > 0 && newStartScheduledEnd < 0) throw new AppointmentException("Scheduling conflict: this customer has an appointment scheduled during these times already.");
+                if(newStartScheduledStart > 0 && newEndScheduledEnd < 0) throw new AppointmentException("Scheduling conflict: this customer has an appointment scheduled during these times already.");
+            }
+        } catch (SQLException e) {
+            throw new AppointmentException("Sql exception thrown, most likely the given customer id does not exist");
+        }
     }
 
     /**
