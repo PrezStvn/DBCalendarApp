@@ -38,6 +38,12 @@ public class AddCustomerController implements Initializable {
     public ComboBox<Division> DivisionComboBox;
     private ObservableList<Division> divisionObservableList;
 
+    /**
+     * when scene is created: CountrycomboBox is populated with the resuled of the query to CustomerHelper
+     * then we get the full list of Divisions to be filtered when a country selection is made
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         //set values for CountryComboBox
@@ -87,6 +93,11 @@ public class AddCustomerController implements Initializable {
         return filteredDivisions;
     }
 
+    /**
+     *
+     * @param actionEvent
+     * @throws IOException
+     */
     public void onSaveClick(ActionEvent actionEvent) throws IOException {
         try {
             Customer createdCustomer = isValidCustomer();

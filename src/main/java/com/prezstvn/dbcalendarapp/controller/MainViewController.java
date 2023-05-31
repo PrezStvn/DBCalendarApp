@@ -26,7 +26,6 @@ import java.util.ResourceBundle;
 
 public class MainViewController implements Initializable {
     public Button ScheduleButton;
-    public Button ReportsButton;
     public Button RecordsButton;
     public Button typeReportsButton;
     public Button contactSchedules;
@@ -36,7 +35,11 @@ public class MainViewController implements Initializable {
     private int userId;
 
 
-
+    /**
+     * Scene to the main Schedule scene
+     * @param actionEvent
+     * @throws IOException
+     */
     public void ViewSchedule(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/Schedule.fxml"));
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
@@ -74,7 +77,7 @@ public class MainViewController implements Initializable {
 
     /**
      * pulls current users appointments and iterates through them to see if any start within 15 mintues of now or are presently ongoing
-     * if neither of those are true for all of the users appointments an alert is shown to the user telling them
+     * if neither of those are true for all users appointments an alert is shown to the user telling them
      * they have no appointments in the near future
      */
     private void appointmentCheck() {
@@ -115,6 +118,11 @@ public class MainViewController implements Initializable {
         stage.show();
     }
 
+    /**
+     * scene to ContactSchedules
+     * @param actionEvent
+     * @throws IOException
+     */
     public void toContactSchedules(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/ContactSchedules.fxml"));
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
@@ -123,6 +131,11 @@ public class MainViewController implements Initializable {
         stage.show();
     }
 
+    /**
+     * Scene to LoginActivity
+     * @param actionEvent
+     * @throws IOException
+     */
     public void toLoginActivity(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/LoginActivity.fxml"));
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
@@ -131,6 +144,11 @@ public class MainViewController implements Initializable {
         stage.show();
     }
 
+    /**
+     * Scene to UserSchedules
+     * @param actionEvent
+     * @throws IOException
+     */
     public void toUserSchedules(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/UserSchedules.fxml"));
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();

@@ -80,7 +80,7 @@ public class AppointmentTypeReportController implements Initializable {
         Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/MainMenu.fxml"));
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         stage.setTitle("Main Menu");
-        stage.setScene(new Scene(root, 400, 300));
+        stage.setScene(new Scene(root, 191, 320));
         stage.show();
     }
 }

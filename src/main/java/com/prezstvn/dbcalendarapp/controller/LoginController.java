@@ -34,6 +34,12 @@ public class LoginController implements Initializable {
     private String errorMessage;
     // used to hold the id of the user that has logged in, on order to send it to the MainViewController
 
+    /**
+     * takes input from the two textfields and attempts to login with this information
+     * if login successful we log that info and push user to main menu
+     * if not we log that info and alert the user that the attempt was a failure
+     * @param actionEvent
+     */
     public void loginAttempt(ActionEvent actionEvent) {
         try {
             String username = userField.getText();
@@ -60,6 +66,11 @@ public class LoginController implements Initializable {
         }
     }
 
+    /**
+     * switch scene to main menu
+     * @param actionEvent
+     * @throws IOException
+     */
     private void switchToMainScene(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/prezstvn/dbcalendarapp/MainMenu.fxml"));
         Parent root = loader.load();
@@ -67,10 +78,15 @@ public class LoginController implements Initializable {
         controller.setUserId(user);
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setTitle("Main Menu");
-        stage.setScene(new Scene(root, 400, 200));
+        stage.setScene(new Scene(root, 191, 320));
         stage.show();
     }
 
+    /**
+     * dynamically set the fields in language based on the users ZoneId
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ResourceBundle bundle = ResourceBundle.getBundle("login", Locale.getDefault());

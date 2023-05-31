@@ -64,6 +64,9 @@ public class ScheduleController implements Initializable {
 
     }
 
+    /**
+     * setting property values for entire TableView to properly display data returned from database
+     */
     private void setSchedule() {
         appointmentIdColumn.setCellValueFactory(new PropertyValueFactory<>("appointmentId"));
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
@@ -137,6 +140,11 @@ public class ScheduleController implements Initializable {
         scheduleTable.setItems(monthView);
     }
 
+    /**
+     * Scene to AddAppointment
+     * @param actionEvent
+     * @throws IOException
+     */
     public void addAppointment(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/AddAppointment.fxml"));
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
@@ -145,6 +153,12 @@ public class ScheduleController implements Initializable {
         stage.show();
     }
 
+    /**
+     * TableView scheduleTable selection model retireved
+     * if no appointment is selected exception is thrown to exit code segment
+     * if appointment is successfully deleted alert is shown with info about the deleted appointment apptId and appt Type
+     * @param actionEvent
+     */
     public void deleteAppointment(ActionEvent actionEvent) {
         try {
             Appointment appointmentToDelete = scheduleTable.getSelectionModel().getSelectedItem();
@@ -169,6 +183,14 @@ public class ScheduleController implements Initializable {
         }
     }
 
+    /**
+     * the currently selected appt is retrieved from selection model on tableview
+     * begins to load the ModifyAppointment scene
+     * after loader loads the file location we pull the instance of the class out to pass it the selected appointment with controller.setTargetAppointment()
+     * if no appointment is selected in TableView an exception is thrown to exit the code segment and let the user know to select an appt
+     * @param actionEvent
+     * @throws IOException
+     */
     public void modifyAppointment(ActionEvent actionEvent) throws IOException {
         try {
             Appointment targetAppointment = scheduleTable.getSelectionModel().getSelectedItem();
@@ -191,12 +213,16 @@ public class ScheduleController implements Initializable {
         }
     }
 
-
+    /**
+     * Scene to Main Menu
+     * @param actionEvent
+     * @throws IOException
+     */
     public void onMainMenuClick(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/MainMenu.fxml"));
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         stage.setTitle("Main Menu");
-        stage.setScene(new Scene(root, 400, 300));
+        stage.setScene(new Scene(root, 191, 320));
         stage.show();
     }
 }
