@@ -12,10 +12,9 @@ public class User {
     private LocalDateTime lastUpdate;
     private String lastUpdatedBy;
 
-    public User(int userId, String userName, String password) {
+    public User(int userId, String userName) {
         this.userId = userId;
         this.userName = userName;
-        this.password = password;
     }
     public int getUserId() {
         return userId;

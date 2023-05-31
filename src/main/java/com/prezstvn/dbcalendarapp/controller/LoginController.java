@@ -1,6 +1,7 @@
 package com.prezstvn.dbcalendarapp.controller;
 
 import com.prezstvn.dbcalendarapp.helper.LoginHelper;
+import com.prezstvn.dbcalendarapp.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -25,22 +26,23 @@ public class LoginController implements Initializable {
     public TextField userField;
     public TextField passwordField;
     public Button loginButton;
-    public AnchorPane zoneId;
     public Label userLabel;
     public Label passwordLabel;
     public Label systemZoneId;
-
+    private User user;
     private String errorMessage;
+    // used to hold the id of the user that has logged in, on order to send it to the MainViewController
 
     public void loginAttempt(ActionEvent actionEvent) {
         try {
             String username = userField.getText();
             String password = passwordField.getText();
-            if(LoginHelper.login(username, password)) {
+            user = LoginHelper.login(username, password);
+            if(user != null) {
                 System.out.println("YOU LOGGED IN");
                 switchToMainScene(actionEvent);
             } else {
-                throw new SQLException();
+                throw new SQLException("The username and password combination you entered does not exist or is incorrect.");
             }
         } catch(SQLException e) {
             System.out.println(e);
@@ -57,9 +59,12 @@ public class LoginController implements Initializable {
     }
 
     private void switchToMainScene(ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/MainMenu.fxml"));
-        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        stage.setTitle("Main App Menu");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/prezstvn/dbcalendarapp/MainMenu.fxml"));
+        Parent root = loader.load();
+        MainViewController controller = loader.getController();
+        controller.setUserId(user);
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        stage.setTitle("Main Menu");
         stage.setScene(new Scene(root, 400, 300));
         stage.show();
     }

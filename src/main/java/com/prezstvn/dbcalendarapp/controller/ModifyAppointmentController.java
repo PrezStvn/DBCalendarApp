@@ -200,16 +200,40 @@ public class ModifyAppointmentController implements Initializable {
         ContactComboCox.getSelectionModel().select(indexOfContactInList);
     }
 
+    /**
+     * all logical time checks
+     * first checks to ensure times selected are during normal business hours 0800-2200 EST
+     * then checks against all other customer_id appts to see if there are any overlaps
+     * throws an exception if any checks fail
+     * @param customerId customer for whom we are scheduling an appt
+     * @param startTime the soon to be appts start time
+     * @param endTime "" end time
+     * @throws AppointmentException
+     */
     private void ChronoCheck(int customerId, ZonedDateTime startTime, ZonedDateTime endTime) throws AppointmentException {
+        LocalTime businessStart = LocalTime.of(8, 0); // 08:00 EST
+        LocalTime businessEnd = LocalTime.of(22, 0); // 22:00 EST
+        ZonedDateTime estBusinessStart = startTime.withZoneSameInstant(ZoneId.of("America/New_York"));
+        ZonedDateTime estBusinessEnd = endTime.withZoneSameInstant(ZoneId.of("America/New_York"));
+        LocalTime estBusStart = estBusinessStart.toLocalTime();
+        LocalTime estBusEnd = estBusinessEnd.toLocalTime();
+        if(!(estBusStart.isAfter(businessStart) && estBusStart.isBefore(businessEnd))) throw new AppointmentException("Appointment must start between the hours of  08:00 EST and 22:00 EST");
+        if(!(estBusEnd.isAfter(businessStart) && estBusEnd.isBefore(businessEnd))) throw new AppointmentException("Appointment must end between the hours of  08:00 EST and 22:00 EST");
+
         try {
             ObservableList<Appointment> customerAppointments = AppointmentHelper.getCustomerAppointments(customerId);
 
             for(Appointment appt : customerAppointments) {
                 //skips checks on the unupdated version of this appointment that is still stored in customerAppointments
                 if(appt.getAppointmentId() == targetAppointment.getAppointmentId()) continue;
+                //the new appts start time compared to the scheduled appts start time
+                //if negative means new time > scheduled time.
                 long newStartScheduledStart = ChronoUnit.MINUTES.between(startTime, appt.getStart());
+                //new start in relation to scheduled end time
                 long newStartScheduledEnd = ChronoUnit.MINUTES.between(startTime, appt.getEnd());
+                //new end in relation to schedule start
                 long newEndScheduledStart = ChronoUnit.MINUTES.between(endTime, appt.getStart());
+                // new end in relation to scheduled end
                 long newEndScheduledEnd = ChronoUnit.MINUTES.between(endTime, appt.getEnd());
                 //if 2 appointments have the same start time
                 if(newStartScheduledStart == 0) throw new AppointmentException("Scheduling conflict: two appointments cannot start at the same time.");
@@ -223,6 +247,7 @@ public class ModifyAppointmentController implements Initializable {
                 if(newStartScheduledStart > 0 && newEndScheduledEnd < 0) throw new AppointmentException("Scheduling conflict: this customer has an appointment scheduled during these times already.");
             }
         } catch (SQLException e) {
+            //is thrown if our call to
             throw new AppointmentException("Sql exception thrown, most likely the given customer id does not exist");
         }
     }

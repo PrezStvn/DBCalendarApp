@@ -47,6 +47,13 @@ public abstract class AppointmentHelper {
         return allAppointments;
     }
 
+    /**
+     * used to get all scheduled appts belonging to customerId
+     * used to check times and ensure there are no scheduling conflicts
+     * @param customerId
+     * @return list of customerId's scheduled appts
+     * @throws SQLException will only be thrown if there is an issue with the DB
+     */
     public static ObservableList<Appointment> getCustomerAppointments(int customerId) throws SQLException {
         ObservableList<Appointment> customerAppointments = FXCollections.observableArrayList();
         String sql = "SELECT * FROM Appointments WHERE Customer_ID =?";
@@ -137,5 +144,24 @@ public abstract class AppointmentHelper {
         if(rowAffected == 0) {
             throw new SQLException("No Appointment was updated, internal error");
         }
+    }
+
+    /**
+     * query and return all appointments associated with userId(User_ID on db)
+     * @param userId
+     * @return
+     * @throws SQLException
+     */
+    public ObservableList<Appointment> getUserAppointments(int userId) throws SQLException {
+        ObservableList<Appointment> userAppointments = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM Appointments WHERE Customer_ID =?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, userId);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()) {
+            Appointment appt = mapAppointment(rs);
+            userAppointments.add(appt);
+        }
+        return userAppointments;
     }
 }

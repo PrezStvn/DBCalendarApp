@@ -166,13 +166,32 @@ public class AddAppointmentController implements Initializable {
     }
 
     private void ChronoCheck(int customerId, ZonedDateTime startTime, ZonedDateTime endTime) throws AppointmentException {
+        //setting the prescribed business hours to compare our start and end times against
+
+        LocalTime businessStart = LocalTime.of(8, 0); // 08:00 EST
+        LocalTime businessEnd = LocalTime.of(22, 0); // 22:00 EST
+        //getting the selected times and changing them to est timezone
+        ZonedDateTime estBusinessStart = startTime.withZoneSameInstant(ZoneId.of("America/New_York"));
+        ZonedDateTime estBusinessEnd = endTime.withZoneSameInstant(ZoneId.of("America/New_York"));
+        //converting the zoned times to localtimes in preparation for comparison
+        LocalTime estBusStart = estBusinessStart.toLocalTime();
+        LocalTime estBusEnd = estBusinessEnd.toLocalTime();
+        //checking if start is between business hours then if end is between business hours EST
+        if(!(estBusStart.isAfter(businessStart) && estBusStart.isBefore(businessEnd))) throw new AppointmentException("Appointment must start between the hours of  08:00 EST and 22:00 EST");
+        if(!(estBusEnd.isAfter(businessStart) && estBusEnd.isBefore(businessEnd))) throw new AppointmentException("Appointment must end between the hours of  08:00 EST and 22:00 EST");
+
         try {
             ObservableList<Appointment> customerAppointments = AppointmentHelper.getCustomerAppointments(customerId);
 
             for(Appointment appt : customerAppointments) {
+                //the new appts start time compared to the already schedule appts start time
+                //if negative means new time > scheduled time.
                 long newStartScheduledStart = ChronoUnit.MINUTES.between(startTime, appt.getStart());
+                //new start in relation to scheduled end time
                 long newStartScheduledEnd = ChronoUnit.MINUTES.between(startTime, appt.getEnd());
+                //new end in relation to schedule start
                 long newEndScheduledStart = ChronoUnit.MINUTES.between(endTime, appt.getStart());
+                // new end in relation to scheduled end
                 long newEndScheduledEnd = ChronoUnit.MINUTES.between(endTime, appt.getEnd());
                 //if 2 appointments have the same start time
                 if(newStartScheduledStart == 0) throw new AppointmentException("Scheduling conflict: two appointments cannot start at the same time.");
