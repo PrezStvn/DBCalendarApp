@@ -101,6 +101,11 @@ public class MainViewController implements Initializable {
         }
     }
 
+    /**
+     * change scene to AppointmentTypeReport.fxml
+     * @param actionEvent
+     * @throws IOException
+     */
     public void onTypeReportsClick(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/AppointmentTypeReport.fxml"));
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
