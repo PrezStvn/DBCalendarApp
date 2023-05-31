@@ -10,5 +10,6 @@
       <Button fx:id="RecordsButton" layoutX="66.0" layoutY="110.0" mnemonicParsing="false" onAction="#onRecordsClick" text="Records" />
       <Button fx:id="typeReportsButton" layoutX="15.0" layoutY="152.0" mnemonicParsing="false" onAction="#onTypeReportsClick" text="Appointment Types Report" />
       <Label layoutX="81.0" layoutY="23.0" text="Menu" />
+      <Button fx:id="contactSchedules" layoutX="40.0" layoutY="194.0" mnemonicParsing="false" onAction="#toContactSchedules" text="Contact Schedules" />
    </children>
 </AnchorPane>

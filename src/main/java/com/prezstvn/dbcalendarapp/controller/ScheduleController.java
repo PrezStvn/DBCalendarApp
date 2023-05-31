@@ -144,7 +144,7 @@ public class ScheduleController implements Initializable {
         stage.setScene(new Scene(root, 600, 400));
         stage.show();
     }
-    //todo: add second popup after deletion is successful
+
     public void deleteAppointment(ActionEvent actionEvent) {
         try {
             Appointment appointmentToDelete = scheduleTable.getSelectionModel().getSelectedItem();

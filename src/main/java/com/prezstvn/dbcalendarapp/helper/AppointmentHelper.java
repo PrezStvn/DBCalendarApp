@@ -154,7 +154,7 @@ public abstract class AppointmentHelper {
      */
     public ObservableList<Appointment> getUserAppointments(int userId) throws SQLException {
         ObservableList<Appointment> userAppointments = FXCollections.observableArrayList();
-        String sql = "SELECT * FROM Appointments WHERE Customer_ID =?";
+        String sql = "SELECT * FROM Appointments WHERE User_ID =?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, userId);
         ResultSet rs = ps.executeQuery();
@@ -163,5 +163,18 @@ public abstract class AppointmentHelper {
             userAppointments.add(appt);
         }
         return userAppointments;
+    }
+
+    public static ObservableList<Appointment> getContactAppointments(int contactId) throws SQLException {
+        ObservableList<Appointment> contactAppointments = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM Appointments WHERE Contact_ID =?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, contactId);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()) {
+            Appointment appt = mapAppointment(rs);
+            contactAppointments.add(appt);
+        }
+        return contactAppointments;
     }
 }

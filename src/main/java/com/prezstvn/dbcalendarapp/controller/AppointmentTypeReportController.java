@@ -46,6 +46,11 @@ public class AppointmentTypeReportController implements Initializable {
         }
     }
 
+    /**
+     * iterates through the java.time.Month object to pull appointments for each month
+     * then we enter a second loop inside that connected to a map and using i to iterate over that map
+     * to filter appointments of type[i] for each month and append that information to our stringBuilder
+     */
     private void writeReport() {
         int month = 0;
         Map<Integer, String> typeMap = new HashMap<Integer, String>();
@@ -55,11 +60,14 @@ public class AppointmentTypeReportController implements Initializable {
         typeMap.put(3, "Coffee");
         StringBuilder thisMonthsReport = new StringBuilder();
         for(Month m : Month.values()) {
+
            thisMonthsReport.append(m.toString()).append(":\n");
+           //LAMBDA: first filtering down to narrow scope and only view appointments for the current month(current in the for each loop)
             ObservableList<Appointment> thisMonthsAppointments = allAppointments.stream().filter(appt ->
                                         appt.getStart().getMonthValue() == m.getValue()).collect(Collectors.toCollection(FXCollections::observableArrayList));
                 for(int i = 0; i < typeMap.size(); i++) {
                     int finalI = i;
+                    //LAMBDA: used on the creation o the oList to filter out anything from the current month that is not of type(i)
                     ObservableList<Appointment> numberOfAppointmentsOfType = thisMonthsAppointments.stream()
                             .filter(appt -> appt.getType().equals(typeMap.get(finalI))).collect(Collectors.toCollection(FXCollections::observableArrayList));
                     thisMonthsReport.append(typeMap.get(i)).append(": ").append(numberOfAppointmentsOfType.size()).append("\n");

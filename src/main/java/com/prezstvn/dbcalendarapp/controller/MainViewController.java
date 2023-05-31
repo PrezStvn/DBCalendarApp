@@ -29,6 +29,7 @@ public class MainViewController implements Initializable {
     public Button ReportsButton;
     public Button RecordsButton;
     public Button typeReportsButton;
+    public Button contactSchedules;
 
     private int userId;
 
@@ -54,6 +55,7 @@ public class MainViewController implements Initializable {
     }
 
     /**
+     * no longer accurate moved all code from here to start at the setUserId method called from the LoginController
      * initializing in order to run checks on logged-in users appointments
      * alert them if they have an appointment within 15 minutes
      * @param url
@@ -68,6 +70,11 @@ public class MainViewController implements Initializable {
         appointmentCheck();
     }
 
+    /**
+     * pulls current users appointments and iterates through them to see if any start within 15 mintues of now or are presently ongoing
+     * if neither of those are true for all of the users appointments an alert is shown to the user telling them
+     * they have no appointments in the near future
+     */
     private void appointmentCheck() {
         try {
             ObservableList<Appointment> userAppointments = AppointmentHelper.getCustomerAppointments(userId);
@@ -78,11 +85,11 @@ public class MainViewController implements Initializable {
                 if(timeDifference <= 15 && timeDifference >= 0) throw new AppointmentException("You have an appointment that starts in " + timeDifference + " minutes located at " + appt.getLocation());
                 if(timeDifference < 0 && timeDifference >= -15)  throw new AppointmentException("you have an appointment that started " + timeDifference + " minutes ago at " + appt.getLocation());
                 if(timeDifference < 0 && timeDifferenceEnd > 0) throw new AppointmentException("You have an ongoing appoint at " + appt.getLocation());
-                Alert alert =  new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Scheduled Appointment notice.");
-                alert.setContentText("There are no upcoming appointments presently scheduled");
-                alert.showAndWait();
             }
+            Alert alert =  new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Scheduled Appointment notice.");
+            alert.setContentText("There are no upcoming appointments presently scheduled");
+            alert.show();
         } catch(SQLException e) {
             System.out.println("unable to check users schedules");
         } catch(AppointmentException e) {
@@ -98,6 +105,14 @@ public class MainViewController implements Initializable {
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         stage.setTitle("Appointment Type Report");
         stage.setScene(new Scene(root, 700, 400));
+        stage.show();
+    }
+
+    public void toContactSchedules(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/ContactSchedules.fxml"));
+        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
+        stage.setTitle("Contact Schedules");
+        stage.setScene(new Scene(root, 800, 400));
         stage.show();
     }
 }
