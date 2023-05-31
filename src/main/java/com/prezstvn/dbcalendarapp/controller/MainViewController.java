@@ -28,6 +28,7 @@ public class MainViewController implements Initializable {
     public Button ScheduleButton;
     public Button ReportsButton;
     public Button RecordsButton;
+    public Button typeReportsButton;
 
     private int userId;
 
@@ -77,6 +78,10 @@ public class MainViewController implements Initializable {
                 if(timeDifference <= 15 && timeDifference >= 0) throw new AppointmentException("You have an appointment that starts in " + timeDifference + " minutes located at " + appt.getLocation());
                 if(timeDifference < 0 && timeDifference >= -15)  throw new AppointmentException("you have an appointment that started " + timeDifference + " minutes ago at " + appt.getLocation());
                 if(timeDifference < 0 && timeDifferenceEnd > 0) throw new AppointmentException("You have an ongoing appoint at " + appt.getLocation());
+                Alert alert =  new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Scheduled Appointment notice.");
+                alert.setContentText("There are no upcoming appointments presently scheduled");
+                alert.showAndWait();
             }
         } catch(SQLException e) {
             System.out.println("unable to check users schedules");
@@ -86,5 +91,13 @@ public class MainViewController implements Initializable {
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
+    }
+
+    public void onTypeReportsClick(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/AppointmentTypeReport.fxml"));
+        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
+        stage.setTitle("Appointment Type Report");
+        stage.setScene(new Scene(root, 700, 400));
+        stage.show();
     }
 }

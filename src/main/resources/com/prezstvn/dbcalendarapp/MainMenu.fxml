@@ -8,7 +8,7 @@
    <children>
       <Button fx:id="ScheduleButton" layoutX="63.0" layoutY="67.0" mnemonicParsing="false" onAction="#ViewSchedule" text="Schedule" />
       <Button fx:id="RecordsButton" layoutX="66.0" layoutY="110.0" mnemonicParsing="false" onAction="#onRecordsClick" text="Records" />
-      <Button fx:id="ReportsButton" layoutX="67.0" layoutY="153.0" mnemonicParsing="false" onAction="#onReportsClick" text="Reports" />
+      <Button fx:id="typeReportsButton" layoutX="15.0" layoutY="152.0" mnemonicParsing="false" onAction="#onTypeReportsClick" text="Appointment Types Report" />
       <Label layoutX="81.0" layoutY="23.0" text="Menu" />
    </children>
 </AnchorPane>

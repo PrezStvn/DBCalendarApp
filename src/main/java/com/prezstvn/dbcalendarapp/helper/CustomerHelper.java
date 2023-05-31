@@ -116,6 +116,12 @@ public abstract class CustomerHelper {
         }
     }
 
+    /**
+     * first deleting appointments belonging to target customer(referential integrity deems it necessary)
+     * then deleting customer record
+     * @param targetCustomer customer to delete from database
+     * @throws SQLException
+     */
     public static void deleteCustomer(Customer targetCustomer) throws SQLException {
         String sqlSchedule = "DELETE FROM Appointments WHERE Customer_ID = ?";
         PreparedStatement psSchedule = JDBC.connection.prepareStatement(sqlSchedule);

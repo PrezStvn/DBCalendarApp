@@ -165,6 +165,13 @@ public class AddAppointmentController implements Initializable {
         return appointmentToAdd;
     }
 
+    /**
+     * all logic that checks times to ensure the new appointment has no time conflicts with any existing appointment
+     * @param customerId passed in order to query for all appointments belonging to customer with customerId
+     * @param startTime start time to check against
+     * @param endTime to check against
+     * @throws AppointmentException is thrown if one of the temporal checks fails carrying a message saying why
+     */
     private void ChronoCheck(int customerId, ZonedDateTime startTime, ZonedDateTime endTime) throws AppointmentException {
         //setting the prescribed business hours to compare our start and end times against
 

@@ -173,6 +173,7 @@ public class ModifyAppointmentController implements Initializable {
         AppointmentCustomerId.setText(String.valueOf(targetAppointment.getCustomerId()));
         setContactComboBox();
         setAppointmentTypes();
+        AppointmentTypeComboBox.getSelectionModel().select(targetAppointment.getType());
         AppointmentUserId.setText(String.valueOf(targetAppointment.getUserId()));
     }
 

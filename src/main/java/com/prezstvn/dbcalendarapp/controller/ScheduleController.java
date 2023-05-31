@@ -3,6 +3,7 @@ package com.prezstvn.dbcalendarapp.controller;
 import com.prezstvn.dbcalendarapp.exception.AppointmentException;
 import com.prezstvn.dbcalendarapp.helper.AppointmentHelper;
 import com.prezstvn.dbcalendarapp.model.Appointment;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +20,9 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.temporal.WeekFields;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class ScheduleController implements Initializable {
     public RadioButton weekRadio;
@@ -74,10 +77,64 @@ public class ScheduleController implements Initializable {
         userIdColumn.setCellValueFactory(new PropertyValueFactory<>("userId"));;
         }
 
+    /**
+     * currently running into an event propagation error that starts in this method
+     * cause uknown at present
+     *
+     * @param actionEvent
+     */
     public void onWeekSelect(ActionEvent actionEvent) {
+        ZonedDateTime currDateTime = ZonedDateTime.now();
+        // idea to use this was taken from stack overflow
+        WeekFields weekFields = WeekFields.SUNDAY_START;
+        int currWeek = currDateTime.get(weekFields.weekOfWeekBasedYear());
+        int currYear = currDateTime.getYear();
+        /**
+         * LAMBDA: used to filter the currently seen schedule
+         * essentially does what the for each loop below does but in somewhat less code
+         */
+        ObservableList<Appointment> weekView = appointmentSchedule.stream().filter(appt ->
+                            /* getting the week of appt in appointmentSchedule then checking it against the users current week*/
+                                        appt.getStart().get(weekFields.weekOfWeekBasedYear()) == currWeek &&
+                                    /* getting year of appt in appointmentSchedule checking against the usersCurrentYear*/
+                                        appt.getStart().getYear() == currYear)
+                                    /*if both checks pass the appt is added to weekView */
+                                        .collect(Collectors.toCollection(FXCollections::observableArrayList));
+        /*
+        for(Appointment appt : weekView) {
+            ZonedDateTime startTime = appt.getStart();
+            int apptWeek = startTime.get(weekFields.weekOfWeekBasedYear());
+            int apptYear = startTime.getYear();
+            if(apptYear == currYear){
+                if(apptWeek == currWeek) weekView.add(appt);
+            }
+        } */
+        scheduleTable.setItems(weekView);
     }
 
+    /**
+     * LAMBDA: when Month view is selected, filter appointmentSchedule with a lambda expression
+     *
+     * @param actionEvent
+     */
     public void onMonthSelect(ActionEvent actionEvent) {
+        ZonedDateTime currDateTime = ZonedDateTime.now();
+        int currMonth = currDateTime.getMonthValue();
+        int currYear = currDateTime.getYear();
+        //create an observableLIst monthview to hold appointmentSchedule appointments filtered by month.
+        ObservableList<Appointment> monthView = appointmentSchedule.stream()
+                /* retrieve month of the appt from appointmentSchedule, check against users current month */
+                .filter(appt -> appt.getStart().getMonthValue() == currMonth &&
+                        /* same with appt year then checking against users current year if both pass the appt is added to monthView*/
+                        appt.getStart().getYear() == currYear).collect(Collectors.toCollection(FXCollections::observableArrayList));
+        /*for(Appointment appt : monthView) {
+            ZonedDateTime apptStartTime = appt.getStart();
+            int apptMonth = apptStartTime.getMonthValue();
+            int apptYear = apptStartTime.getYear();
+            if(apptYear != currYear) monthView.remove(appt);
+            if(apptMonth != currMonth) monthView.remove(appt);
+        } */
+        scheduleTable.setItems(monthView);
     }
 
     public void addAppointment(ActionEvent actionEvent) throws IOException {
@@ -93,6 +150,10 @@ public class ScheduleController implements Initializable {
             Appointment appointmentToDelete = scheduleTable.getSelectionModel().getSelectedItem();
             if (appointmentToDelete == null) throw new AppointmentException("Please select an appointment to delete");
             AppointmentHelper.deleteAppointment(appointmentToDelete.getAppointmentId());
+            Alert alert =  new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Appointment Deletion Successful!");
+            alert.setContentText("Appointment " + appointmentToDelete.getAppointmentId() + " of type: " + appointmentToDelete.getType() + " was successfully deleted.");
+            alert.show();
             appointmentSchedule.remove(appointmentToDelete);
             scheduleTable.setItems(appointmentSchedule);
         } catch(AppointmentException e) {
