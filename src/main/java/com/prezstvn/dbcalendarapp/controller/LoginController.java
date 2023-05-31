@@ -1,6 +1,7 @@
 package com.prezstvn.dbcalendarapp.controller;
 
 import com.prezstvn.dbcalendarapp.helper.LoginHelper;
+import com.prezstvn.dbcalendarapp.logger.LoginLogger;
 import com.prezstvn.dbcalendarapp.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -40,12 +41,13 @@ public class LoginController implements Initializable {
             user = LoginHelper.login(username, password);
             if(user != null) {
                 System.out.println("YOU LOGGED IN");
+                LoginLogger.logActivity(username, true);
                 switchToMainScene(actionEvent);
             } else {
                 throw new SQLException("The username and password combination you entered does not exist or is incorrect.");
             }
         } catch(SQLException e) {
-            System.out.println(e);
+            LoginLogger.logActivity(userField.getText(), false);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Failed Login");
             alert.setContentText(errorMessage);

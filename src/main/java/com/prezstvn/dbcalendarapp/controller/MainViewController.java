@@ -30,6 +30,7 @@ public class MainViewController implements Initializable {
     public Button RecordsButton;
     public Button typeReportsButton;
     public Button contactSchedules;
+    public Button loginActivity;
 
     private int userId;
 
@@ -113,6 +114,14 @@ public class MainViewController implements Initializable {
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         stage.setTitle("Contact Schedules");
         stage.setScene(new Scene(root, 800, 400));
+        stage.show();
+    }
+
+    public void toLoginActivity(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/LoginActivity.fxml"));
+        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
+        stage.setTitle("Login Activity");
+        stage.setScene(new Scene(root, 600, 500));
         stage.show();
     }
 }

@@ -4,12 +4,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="245.0" prefWidth="191.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prezstvn.dbcalendarapp.controller.MainViewController">
+<AnchorPane prefHeight="326.0" prefWidth="191.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prezstvn.dbcalendarapp.controller.MainViewController">
    <children>
       <Button fx:id="ScheduleButton" layoutX="63.0" layoutY="67.0" mnemonicParsing="false" onAction="#ViewSchedule" text="Schedule" />
       <Button fx:id="RecordsButton" layoutX="66.0" layoutY="110.0" mnemonicParsing="false" onAction="#onRecordsClick" text="Records" />
       <Button fx:id="typeReportsButton" layoutX="15.0" layoutY="152.0" mnemonicParsing="false" onAction="#onTypeReportsClick" text="Appointment Types Report" />
       <Label layoutX="81.0" layoutY="23.0" text="Menu" />
       <Button fx:id="contactSchedules" layoutX="40.0" layoutY="194.0" mnemonicParsing="false" onAction="#toContactSchedules" text="Contact Schedules" />
+      <Button fx:id="loginActivity" layoutX="51.0" layoutY="272.0" mnemonicParsing="false" onAction="#toLoginActivity" text="Login Activity" />
+      <Button fx:id="UserSchedules" layoutX="46.0" layoutY="235.0" mnemonicParsing="false" onAction="#toUserSchedules" text="User Schedules" />
    </children>
 </AnchorPane>
