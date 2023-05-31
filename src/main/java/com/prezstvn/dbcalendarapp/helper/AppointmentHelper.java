@@ -152,7 +152,7 @@ public abstract class AppointmentHelper {
      * @return
      * @throws SQLException
      */
-    public ObservableList<Appointment> getUserAppointments(int userId) throws SQLException {
+    public static ObservableList<Appointment> getUserAppointments(int userId) throws SQLException {
         ObservableList<Appointment> userAppointments = FXCollections.observableArrayList();
         String sql = "SELECT * FROM Appointments WHERE User_ID =?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);

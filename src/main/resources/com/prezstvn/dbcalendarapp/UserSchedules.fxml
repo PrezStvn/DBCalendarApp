@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="414.0" prefWidth="738.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prezstvn.dbcalendarapp.controller.UserSchedulesController">
+   <children>
+      <Label alignment="BASELINE_CENTER" layoutX="185.0" layoutY="14.0" prefHeight="79.0" prefWidth="229.0" text="User Schedule">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="UserComboBox" layoutX="14.0" layoutY="106.0" onAction="#userSelected" prefWidth="150.0" />
+      <TableView fx:id="UserSchedule" layoutX="185.0" layoutY="93.0" prefHeight="302.0" prefWidth="528.0">
+        <columns>
+          <TableColumn fx:id="appointmentId" prefWidth="75.0" text="Appointment_ID" />
+          <TableColumn fx:id="appointmentTitle" prefWidth="75.0" text="Title" />
+            <TableColumn fx:id="appointmentType" prefWidth="75.0" text="Type" />
+            <TableColumn fx:id="appointmentDescription" prefWidth="75.0" text="Description" />
+            <TableColumn fx:id="appointmentStart" prefWidth="75.0" text="Start" />
+            <TableColumn fx:id="appointmentEnd" prefWidth="75.0" text="End" />
+            <TableColumn fx:id="customerId" prefWidth="75.0" text="Customer_ID" />
+        </columns>
+      </TableView>
+      <Button fx:id="MainMenuButton" layoutX="51.0" layoutY="334.0" mnemonicParsing="false" onAction="#toMainMenu" text="Main Menu" />
+   </children>
+</AnchorPane>
