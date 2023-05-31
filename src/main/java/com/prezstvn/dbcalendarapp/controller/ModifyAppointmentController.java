@@ -1,6 +1,7 @@
 package com.prezstvn.dbcalendarapp.controller;
 
 import com.prezstvn.dbcalendarapp.exception.AppointmentException;
+import com.prezstvn.dbcalendarapp.helper.AppointmentHelper;
 import com.prezstvn.dbcalendarapp.helper.ContactHelper;
 import com.prezstvn.dbcalendarapp.model.Appointment;
 import com.prezstvn.dbcalendarapp.model.Contact;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
 
 /**
@@ -73,13 +75,19 @@ public class ModifyAppointmentController implements Initializable {
      */
     public void onSaveClick(ActionEvent actionEvent) throws IOException {
         try {
-            Appointment appointmentToAdd = isValidAppointment();
+            Appointment updatedAppointment = isValidAppointment();
+            AppointmentHelper.updateAppointment(updatedAppointment);
             Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/Schedule.fxml"));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             stage.setTitle("Schedule");
             stage.setScene(new Scene(root, 900, 400));
             stage.show();
         } catch(AppointmentException e) {
+            Alert alert =  new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Modify Appointment Error");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        } catch(SQLException e) {
             Alert alert =  new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Modify Appointment Error");
             alert.setContentText(e.getMessage());
@@ -105,7 +113,7 @@ public class ModifyAppointmentController implements Initializable {
         String title = AppointmentTitle.getText();
         String description = AppointmentDescription.getText();
         String location = AppointmentLocation.getText();
-        String type;
+        String type = AppointmentTypeComboBox.getValue();
         ZonedDateTime startTime = LocalDateTime.of(AppointmentStartDate.getValue(), StartTimeComboBox.getValue()).atZone(ZoneId.systemDefault());
         ZonedDateTime endTime = LocalDateTime.of(AppointmentEndDate.getValue(), EndTimeComboBox.getValue()).atZone(ZoneId.systemDefault());
         int customerId;
@@ -117,7 +125,24 @@ public class ModifyAppointmentController implements Initializable {
         } catch(Exception e) {
             throw new AppointmentException("Customer_ID and User_ID most both be positive integers and not blank");
         }
-
+        long timeCheck = ChronoUnit.MINUTES.between(startTime, endTime);
+        if(timeCheck < 0) throw new AppointmentException("please select and End Time that is after the Start time.");
+        long pastCheck = ChronoUnit.MINUTES.between(LocalDateTime.now(), startTime);
+        if(pastCheck < 0) throw new AppointmentException("Please select a time that has not already passed.");
+        if(type == null) throw new AppointmentException("Please select an appointment Type");
+        if(title.equals("")) throw new AppointmentException("");
+        if(description.equals("")) throw new AppointmentException("");
+        if(location.equals("")) throw new AppointmentException("");
+        ChronoCheck(customerId, startTime, endTime);
+        appointmentToAdd.setTitle(title);
+        appointmentToAdd.setDescription(description);
+        appointmentToAdd.setLocation(location);
+        appointmentToAdd.setType(type);
+        appointmentToAdd.setStart(startTime);
+        appointmentToAdd.setEnd(endTime);
+        appointmentToAdd.setCustomerId(customerId);
+        appointmentToAdd.setContactId(contactId);
+        appointmentToAdd.setUserId(userId);
         return appointmentToAdd;
     }
 
@@ -173,5 +198,32 @@ public class ModifyAppointmentController implements Initializable {
             else indexOfContactInList++;
         }
         ContactComboCox.getSelectionModel().select(indexOfContactInList);
+    }
+
+    private void ChronoCheck(int customerId, ZonedDateTime startTime, ZonedDateTime endTime) throws AppointmentException {
+        try {
+            ObservableList<Appointment> customerAppointments = AppointmentHelper.getCustomerAppointments(customerId);
+
+            for(Appointment appt : customerAppointments) {
+                //skips checks on the unupdated version of this appointment that is still stored in customerAppointments
+                if(appt.getAppointmentId() == targetAppointment.getAppointmentId()) continue;
+                long newStartScheduledStart = ChronoUnit.MINUTES.between(startTime, appt.getStart());
+                long newStartScheduledEnd = ChronoUnit.MINUTES.between(startTime, appt.getEnd());
+                long newEndScheduledStart = ChronoUnit.MINUTES.between(endTime, appt.getStart());
+                long newEndScheduledEnd = ChronoUnit.MINUTES.between(endTime, appt.getEnd());
+                //if 2 appointments have the same start time
+                if(newStartScheduledStart == 0) throw new AppointmentException("Scheduling conflict: two appointments cannot start at the same time.");
+                //if 2 appointments have the same end time
+                if(newEndScheduledEnd == 0) throw new AppointmentException("Scheduling conflict: two appointments cannot end at the same time");
+                //if new appt starts during another appointment
+                if(newStartScheduledStart < 0 && newStartScheduledEnd > 0) throw new AppointmentException("Scheduling conflict: this start time is during another scheduled appointment for this Customer.");
+                //if new appt ends during another sheduled meeting.
+                if(newEndScheduledStart < 0 && newEndScheduledEnd > 0) throw new AppointmentException("Scheduling conflict: the selected end time is during an already scheduled appointment for this Customer.");
+                //if new appt has another scheduled meeting happen during its times(this meeting is so long it encompasses another meeting)
+                if(newStartScheduledStart > 0 && newEndScheduledEnd < 0) throw new AppointmentException("Scheduling conflict: this customer has an appointment scheduled during these times already.");
+            }
+        } catch (SQLException e) {
+            throw new AppointmentException("Sql exception thrown, most likely the given customer id does not exist");
+        }
     }
 }

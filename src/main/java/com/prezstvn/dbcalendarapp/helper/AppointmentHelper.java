@@ -4,9 +4,7 @@ import com.prezstvn.dbcalendarapp.model.Appointment;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -88,5 +86,56 @@ public abstract class AppointmentHelper {
         mappedAppointment.setCustomerId(rs.getInt("Customer_ID"));
         mappedAppointment.setUserId(rs.getInt("User_ID"));
         return mappedAppointment;
+    }
+
+    public static void createAppointment(Appointment appointmentToAdd) throws SQLException {
+        Timestamp startTime = Timestamp.from(appointmentToAdd.getStart().toInstant());
+        Timestamp endTime = Timestamp.from(appointmentToAdd.getEnd().toInstant());
+        String sql =    "INSERT INTO appointments(Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID) " +
+                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, appointmentToAdd.getTitle());
+        ps.setString(2, appointmentToAdd.getDescription());
+        ps.setString(3, appointmentToAdd.getLocation());
+        ps.setString(4, appointmentToAdd.getType());
+        ps.setTimestamp(5, startTime);
+        ps.setTimestamp(6, endTime);
+        ps.setInt(7, appointmentToAdd.getCustomerId());
+        ps.setInt(8, appointmentToAdd.getUserId());
+        ps.setInt(9, appointmentToAdd.getContactId());
+        int rowAffected = ps.executeUpdate();
+        if(rowAffected == 0) {
+            throw new SQLException("No Appointment was created, internal error");
+        }
+    }
+
+    public static void deleteAppointment(int appointmentId) throws SQLException {
+        String sql = "DELETE FROM appointments WHERE Appointment_ID = ?;";
+
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, appointmentId);
+        int rowsAffected = ps.executeUpdate();
+        if(rowsAffected == 0) throw new SQLException("Nothing was deleted");
+    }
+
+    public static void updateAppointment(Appointment updatedAppointment) throws SQLException {
+        String sql = "UPDATE appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Customer_ID, User_ID, Contact_ID " +
+                        "WHERE Appointment_ID = ?;";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        Timestamp startTime = Timestamp.from(updatedAppointment.getStart().toInstant());
+        Timestamp endTime = Timestamp.from(updatedAppointment.getEnd().toInstant());
+        ps.setString(1, updatedAppointment.getTitle());
+        ps.setString(2, updatedAppointment.getDescription());
+        ps.setString(3, updatedAppointment.getLocation());
+        ps.setString(4, updatedAppointment.getType());
+        ps.setTimestamp(5, startTime);
+        ps.setTimestamp(6, endTime);
+        ps.setInt(7, updatedAppointment.getCustomerId());
+        ps.setInt(8, updatedAppointment.getUserId());
+        ps.setInt(9, updatedAppointment.getContactId());
+        int rowAffected = ps.executeUpdate();
+        if(rowAffected == 0) {
+            throw new SQLException("No Appointment was updated, internal error");
+        }
     }
 }

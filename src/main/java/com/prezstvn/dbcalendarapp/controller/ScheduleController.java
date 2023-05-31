@@ -1,5 +1,6 @@
 package com.prezstvn.dbcalendarapp.controller;
 
+import com.prezstvn.dbcalendarapp.exception.AppointmentException;
 import com.prezstvn.dbcalendarapp.helper.AppointmentHelper;
 import com.prezstvn.dbcalendarapp.model.Appointment;
 import javafx.collections.ObservableList;
@@ -86,8 +87,25 @@ public class ScheduleController implements Initializable {
         stage.setScene(new Scene(root, 600, 400));
         stage.show();
     }
-
+    //todo: add second popup after deletion is successful
     public void deleteAppointment(ActionEvent actionEvent) {
+        try {
+            Appointment appointmentToDelete = scheduleTable.getSelectionModel().getSelectedItem();
+            if (appointmentToDelete == null) throw new AppointmentException("Please select an appointment to delete");
+            AppointmentHelper.deleteAppointment(appointmentToDelete.getAppointmentId());
+            appointmentSchedule.remove(appointmentToDelete);
+            scheduleTable.setItems(appointmentSchedule);
+        } catch(AppointmentException e) {
+            Alert alert =  new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Delete Appointment Selection Error");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        } catch(SQLException e) {
+            Alert alert =  new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Delete Customer Selection Error");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     public void modifyAppointment(ActionEvent actionEvent) throws IOException {

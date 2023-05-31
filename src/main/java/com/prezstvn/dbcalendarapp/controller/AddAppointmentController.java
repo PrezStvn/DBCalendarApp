@@ -101,14 +101,21 @@ public class AddAppointmentController implements Initializable {
         try {
             //TODO: method that calls the save here
             Appointment appointmentToAdd = isValidAppointment();
+            AppointmentHelper.createAppointment(appointmentToAdd);
             Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/Schedule.fxml"));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             stage.setTitle("Schedule");
             stage.setScene(new Scene(root, 700, 600));
             stage.show();
-        } catch(AppointmentException e) {
+        } catch(SQLException e) {
             Alert alert =  new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Modify Appointment Error");
+            alert.setTitle("Add Appointment Error");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+        catch(AppointmentException e) {
+            Alert alert =  new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Add Appointment Error");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
@@ -137,11 +144,24 @@ public class AddAppointmentController implements Initializable {
         } catch(Exception e) {
             throw new AppointmentException("Customer_ID and User_ID most both be positive integers and not blank");
         }
+        long timeCheck = ChronoUnit.MINUTES.between(startTime, endTime);
+        if(timeCheck < 0) throw new AppointmentException("please select and End Time that is after the Start time.");
+        long pastCheck = ChronoUnit.MINUTES.between(LocalDateTime.now(), startTime);
+        if(pastCheck < 0) throw new AppointmentException("Please select a time that has not already passed.");
         if(type == null) throw new AppointmentException("Please select an appointment Type");
         if(title.equals("")) throw new AppointmentException("");
         if(description.equals("")) throw new AppointmentException("");
         if(location.equals("")) throw new AppointmentException("");
         ChronoCheck(customerId, startTime, endTime);
+        appointmentToAdd.setTitle(title);
+        appointmentToAdd.setDescription(description);
+        appointmentToAdd.setLocation(location);
+        appointmentToAdd.setType(type);
+        appointmentToAdd.setStart(startTime);
+        appointmentToAdd.setEnd(endTime);
+        appointmentToAdd.setCustomerId(customerId);
+        appointmentToAdd.setContactId(contactId);
+        appointmentToAdd.setUserId(userId);
         return appointmentToAdd;
     }
 
@@ -154,8 +174,15 @@ public class AddAppointmentController implements Initializable {
                 long newStartScheduledEnd = ChronoUnit.MINUTES.between(startTime, appt.getEnd());
                 long newEndScheduledStart = ChronoUnit.MINUTES.between(endTime, appt.getStart());
                 long newEndScheduledEnd = ChronoUnit.MINUTES.between(endTime, appt.getEnd());
-                if(newStartScheduledStart > 0 && newStartScheduledEnd < 0) throw new AppointmentException("Scheduling conflict: this customer has an appointment scheduled during these times already.");
-                if(newEndScheduledStart > 0 && newStartScheduledEnd < 0) throw new AppointmentException("Scheduling conflict: this customer has an appointment scheduled during these times already.");
+                //if 2 appointments have the same start time
+                if(newStartScheduledStart == 0) throw new AppointmentException("Scheduling conflict: two appointments cannot start at the same time.");
+                //if 2 appointments have the same end time
+                if(newEndScheduledEnd == 0) throw new AppointmentException("Scheduling conflict: two appointments cannot end at the same time");
+                //if new appt starts during another appointment
+                if(newStartScheduledStart < 0 && newStartScheduledEnd > 0) throw new AppointmentException("Scheduling conflict: this start time is during another scheduled appointment for this Customer.");
+                //if new appt ends during another sheduled meeting.
+                if(newEndScheduledStart < 0 && newEndScheduledEnd > 0) throw new AppointmentException("Scheduling conflict: the selected end time is during an already scheduled appointment for this Customer.");
+                //if new appt has another scheduled meeting happen during its times(this meeting is so long it encompasses another meeting)
                 if(newStartScheduledStart > 0 && newEndScheduledEnd < 0) throw new AppointmentException("Scheduling conflict: this customer has an appointment scheduled during these times already.");
             }
         } catch (SQLException e) {
