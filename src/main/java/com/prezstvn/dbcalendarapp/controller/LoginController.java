@@ -24,12 +24,32 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
+    /**
+     * field to hold user input username to login
+     */
     public TextField userField;
+    /**
+     * field to hold user input password to login
+     */
     public TextField passwordField;
+    /**
+     * to attempt login
+     */
     public Button loginButton;
+    /**
+     * labeled to dynamically set the text to the users system language using the files in the resource bundle
+     */
     public Label userLabel;
+    /**
+     * all fields are given fxid to dynamically assign text based on the language of the users system
+     */
     public Label passwordLabel;
+
     public Label systemZoneId;
+    /**
+     * after login is succesfull this value is set to the user who logged in
+     * to be passed to the MainView with the setUser(user) function
+     */
     private User user;
     private String errorMessage;
     // used to hold the id of the user that has logged in, on order to send it to the MainViewController

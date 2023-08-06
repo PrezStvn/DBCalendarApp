@@ -1,0 +1,7 @@
+module:com.prezstvn.dbcalendarapp
+com.prezstvn.dbcalendarapp
+com.prezstvn.dbcalendarapp.controller
+com.prezstvn.dbcalendarapp.exception
+com.prezstvn.dbcalendarapp.helper
+com.prezstvn.dbcalendarapp.logger
+com.prezstvn.dbcalendarapp.model

@@ -24,19 +24,67 @@ import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
 
 public class AddAppointmentController implements Initializable {
+    /**
+     * unnecessary and unused since this field is not editable or interactable
+     */
     public TextField AppointmentId;
+    /**
+     * TextField to hold the user inputted value that will become the appointment.title
+     */
     public TextField AppointmentTitle;
+    /**
+     * TextArea to hold the user inputted text that will become the appointment.description
+     */
     public TextArea AppointmentDescription;
+    /**
+     * field to hold user input that will be the appointment.location upon saving
+     *
+     */
     public TextField AppointmentLocation;
+    /**
+     * button that triggers logic to check if all fields are holding valid values
+     *
+     */
     public Button AddAppointmentSave;
+    /**
+     * button to return to Schedule
+     */
     public Button CancelButton;
+    /**
+     * field to hold the value input by the user for the customerId
+     */
     public TextField AppointmentCustomerId;
+    /**
+     * first part of what will become appointment.start(the full date)
+     * shows a calendar view that allows user to pick specific date
+     */
     public DatePicker AppointmentStartDate;
+    /**
+     * first part of what will become appointment.end
+     * shows cal view allows user to pick a specific date in time
+     */
     public DatePicker AppointmentEndDate;
+    /**
+     * combobox to populate with all contacts(this limits users inputs to exactly what is in the database already)
+     */
     public ComboBox<Contact> ContactComboCox;
+    /**
+     * field hold the user input value that will become the appointment.userId
+     */
     public TextField AppointmentUserId;
+    /**
+     * comboBox that holds time that represents every 15 min increment in a day
+     * becomes the time of the start attribute(ZonedDateTime)
+     */
     public ComboBox<LocalTime> StartTimeComboBox;
+    /**
+     * same as above but for endTime
+     */
     public ComboBox<LocalTime> EndTimeComboBox;
+    /**
+     * my brain views this as an enum
+     * limit the user to only picking options from a combobox andnothing will enter the db that the product owner does not want
+     */
     public ComboBox<String> AppointmentTypeComboBox;
 
     /**
@@ -76,6 +124,8 @@ public class AddAppointmentController implements Initializable {
             EndTimeComboBox.getItems().add(startTime);
             startTime = startTime.plusMinutes(15);
         }
+        StartTimeComboBox.getItems().add(LocalTime.of(23, 45));
+        EndTimeComboBox.getItems().add(LocalTime.of(23, 45));
     }
 
     /**

@@ -32,7 +32,12 @@ import java.util.ResourceBundle;
  */
 
 public class ModifyAppointmentController implements Initializable {
+    /**
+     * all attributes are the same as AddAppointmentController
+     *
+     */
     public TextField AppointmentId;
+
     public TextField AppointmentTitle;
     public TextField AppointmentLocation;
     public TextField AppointmentCustomerId;
@@ -49,6 +54,12 @@ public class ModifyAppointmentController implements Initializable {
     public ComboBox<LocalTime> StartTimeComboBox;
     public ComboBox<LocalTime> EndTimeComboBox;
 
+    /**
+     * initialize to populate contactcombobox with contacts from the DB
+     * then to setTimes()
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -95,6 +106,11 @@ public class ModifyAppointmentController implements Initializable {
         }
     }
 
+    /**
+     * setting the time selection combo boxes to have every 15 minute increment of every hour
+     * could not logically figure out how to get every 15 min interval since the last iteration would bring the value to 0
+     * could add manually after the while exits
+     */
     private void setTimes() {
         LocalTime startTime = LocalTime.of(0, 0);
         LocalTime endTime = LocalTime.of(23, 44);
@@ -105,6 +121,8 @@ public class ModifyAppointmentController implements Initializable {
             EndTimeComboBox.getItems().add(startTime);
             startTime = startTime.plusMinutes(15);
         }
+        StartTimeComboBox.getItems().add(LocalTime.of(23, 45));
+        EndTimeComboBox.getItems().add(LocalTime.of(23, 45));
     }
 
     private Appointment isValidAppointment() throws AppointmentException {
@@ -153,7 +171,11 @@ public class ModifyAppointmentController implements Initializable {
         stage.setScene(new Scene(root, 900, 400));
         stage.show();
     }
-    
+
+    /**
+     * used to pass the selected appointment to modify from the schedule view to here after this instance of the controller is loaded
+     * @param sentAppointment
+     */
     public void setTargetAppointment(Appointment sentAppointment) {
         targetAppointment = sentAppointment;
         setFormFields();
@@ -177,6 +199,9 @@ public class ModifyAppointmentController implements Initializable {
         AppointmentUserId.setText(String.valueOf(targetAppointment.getUserId()));
     }
 
+    /**
+     * setting types in the type combobox
+     */
     private void setAppointmentTypes() {
         ObservableList<String> typesList = FXCollections.observableArrayList();
         typesList.add("Planning Session");

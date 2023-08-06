@@ -1,0 +1,10 @@
+2023-05-31 13:14:50 - User: fder, Status: Failure
+2023-05-31 13:15:28 - User: test, Status: Success
+2023-05-31 13:31:16 - User: test, Status: Failure
+2023-05-31 13:31:22 - User: test, Status: Success
+2023-05-31 13:33:57 - User: test, Status: Success
+2023-05-31 14:00:42 - User: test, Status: Success
+2023-05-31 14:02:00 - User: test, Status: Success
+2023-05-31 14:03:35 - User: test, Status: Success
+2023-05-31 14:24:10 - User: test, Status: Success
+2023-05-31 14:25:17 - User: test, Status: Success

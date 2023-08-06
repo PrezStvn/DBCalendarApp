@@ -48,15 +48,17 @@ public class MainViewController implements Initializable {
         stage.show();
     }
 
+    /**
+     * scene to CustomerRecords
+     * @param actionEvent
+     * @throws IOException
+     */
     public void onRecordsClick(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/CustomerRecords.fxml"));
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         stage.setTitle("Schedule");
         stage.setScene(new Scene(root, 700, 400));
         stage.show();
-    }
-
-    public void onReportsClick(ActionEvent actionEvent) {
     }
 
     /**
@@ -70,6 +72,11 @@ public class MainViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
     }
 
+    /**
+     * used to pass this the user that has logged in to then check if they have an appointment within 15 mins
+     * by calling the appointmentCheck() function
+     * @param user
+     */
     public void setUserId(User user) {
         this.userId = user.getUserId();
         appointmentCheck();

@@ -63,7 +63,7 @@ public class ModifyCustomerController implements Initializable {
             stage.show();
         } catch(CustomerCreationException e) {
             Alert alert =  new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Modify Customer Error");
+            alert.setTitle("Customer Creation Error:");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         } catch(SQLException e) {
@@ -74,6 +74,12 @@ public class ModifyCustomerController implements Initializable {
         }
     }
 
+    /**
+     * all logical checks to ensure the user input values for customer are not empty then
+     *
+     * @return
+     * @throws CustomerCreationException
+     */
     private Customer isValidCustomer() throws CustomerCreationException {
         String name = CustomerName.getText();
         String address = CustomerAddress.getText();
@@ -138,6 +144,11 @@ public class ModifyCustomerController implements Initializable {
         DivisionComboBox.getSelectionModel().select(indexOfCustomerDivision);
     }
 
+    /**
+     * User is returned to the customerRecord scene
+     * @param actionEvent
+     * @throws IOException
+     */
     public void onCancelClick(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/prezstvn/dbcalendarapp/CustomerRecords.fxml"));
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
@@ -146,6 +157,11 @@ public class ModifyCustomerController implements Initializable {
         stage.show();
     }
 
+    /**
+     *  on controller creation set countrycombobox items to the returned values from .getCountryList()
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
